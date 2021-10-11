@@ -217,14 +217,14 @@ class zoneValidator:
         errors = []
         if self.parent_zone_ds_record[zone] and isinstance(self.parent_zone_ds_record[zone], dns.rdtypes.ANY.DS.DS):
             # TODO: Pass digest_type in the correct way, currently we assume SHA256.
-            zone_ds_result = zv.getDSFromDNSKeyByZone(zone, nameserver)
+            zone_ds_result = self.getDSFromDNSKeyByZone(zone, nameserver)
             if isinstance(zone_ds_result, validationError):
                 errors.append(zone_ds_result)
                 return errors
             if zone_ds_result:
                 if self.parent_zone_ds_record[zone] == zone_ds_result:
                     # Zone is secure, execute next check, valide rrsig record
-                    rrsig_check_result = zv.validate_rrsig_for_zone_by_nameserver(zone, nameserver)
+                    rrsig_check_result = self.validate_rrsig_for_zone_by_nameserver(zone, nameserver)
                     if rrsig_check_result:
                         errors.append(rrsig_check_result)
                 else:
@@ -233,7 +233,7 @@ class zoneValidator:
             else:
                 errors.append(validationError('DNSSEC_ZONE_IS_NOT_PROPERLY_SIGNED', zone, nameserver))
         else:
-            zone_ds = zv.getDSFromDNSKeyByZone(zone, nameserver)
+            zone_ds = self.getDSFromDNSKeyByZone(zone, nameserver)
             if zone_ds and isinstance(zone_ds, dns.rdtypes.ANY.DS.DS):
                 errors.append(validationError('DNSSEC_ZONE_IS_SIGNED_BUT_PARENT_ZONE_IS_NOT', zone, nameserver))
             else:
@@ -243,10 +243,10 @@ class zoneValidator:
         return errors
 
     def validate(self, zone, fail_if_not_signed=False):
-        errors, warnings, nameserverResult = zv.getNameservers(zone)
+        errors, warnings, nameserverResult = self.getNameservers(zone)
 
         if zone not in self.parent_zone_ds_record.keys():
-            e, w, self.parent_zone_ds_record[zone] = zv.getDSByParentZone(zone)
+            e, w, self.parent_zone_ds_record[zone] = self.getDSByParentZone(zone)
             errors = errors + e
             warnings = warnings + w
         if isinstance(self.parent_zone_ds_record[zone], validationError):
