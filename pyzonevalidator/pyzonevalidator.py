@@ -57,6 +57,9 @@ class validationError:
         if (isinstance(other, validationError)):
             return self.code == other.code
 
+    def __str__(self):
+        return self.__repr__()
+
 class zoneValidator:
     timeout=1.0
 
@@ -242,7 +245,7 @@ class zoneValidator:
                         errors.append(validationError('DNSSEC_ZONE_IS_NOT_SIGNED_BUT_TLD_DOES_SUPPORT_DNSSEC', zone, nameserver))
         return errors
 
-    def validate(self, zone, fail_if_not_signed=False):
+    def validate(self, zone, fail_if_not_signed=False, format='str'):
         errors, warnings, nameserverResult = self.getNameservers(zone)
 
         if zone not in self.parent_zone_ds_record.keys():
@@ -263,5 +266,8 @@ class zoneValidator:
             # There is not DNSSEC, so we should not return the DNSSEC_NO_DS_RECORD error.
             errors = self.filterListItems(validationError('DNSSEC_NO_DS_RECORD', zone), errors)
 
+        if format == 'str':
+            errors = [str(i) for i in errors]
+            warnings = [str(i) for i in warnings]
         returnDict = {'errors': errors, 'warnings': warnings}
         return returnDict
