@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "pyzonevalidator"
-version = "0.3.0"
-description = ""
+version = "0.3.2"
+description = "Validate DNS Zones programmatically"
+readme = "README.md"
 authors = ["Teun Ouwehand <teun@nextpertise.nl>"]
+homepage = "https://github.com/Nextpertise/pyzonevalidator"
+repository = "https://github.com/Nextpertise/pyzonevalidator"
 
 [tool.poetry.dependencies]
 python = "^3.8"
